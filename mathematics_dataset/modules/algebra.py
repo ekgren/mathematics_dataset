@@ -22,6 +22,7 @@ import functools
 import random
 
 # Dependency imports
+from mathematics_dataset.res import en
 from mathematics_dataset import example
 from mathematics_dataset.sample import linear_system
 from mathematics_dataset.sample import number
@@ -157,7 +158,7 @@ def _polynomial_coeffs_with_roots(roots, scale_entropy):
   return [coeff * scale * lcm for coeff in coeffs]
 
 
-def polynomial_roots(value, sample_args, context=None):
+def polynomial_roots(value, sample_args, context=None, lang='en'):
   """E.g., "Solve 2*x**2 - 18 = 0."."""
   del value  # not currently used
   # is_question = context is None
@@ -186,19 +187,21 @@ def polynomial_roots(value, sample_args, context=None):
     else:
       variable = sympy.Symbol(context.pop())
       equality = ops.Eq(polynomial_entity.handle.apply(variable), 0)
-    template = random.choice([
-        'Let {equality}. What is {variable}?',
-        'Let {equality}. Calculate {variable}.',
-        'Suppose {equality}. What is {variable}?',
-        'Suppose {equality}. Calculate {variable}.',
-        'What is {variable} in {equality}?',
-        'Solve {equality} for {variable}.',
-        'Find {variable} such that {equality}.',
-        'Find {variable}, given that {equality}.',
-        'Determine {variable} so that {equality}.',
-        'Determine {variable}, given that {equality}.',
-        'Solve {equality}.'
-    ])
+    # Algebra template 1
+    #template = random.choice([
+    #    'Let {equality}. What is {variable}?',
+    #    'Let {equality}. Calculate {variable}.',
+    #    'Suppose {equality}. What is {variable}?',
+    #    'Suppose {equality}. Calculate {variable}.',
+    #    'What is {variable} in {equality}?',
+    #    'Solve {equality} for {variable}.',
+    #    'Find {variable} such that {equality}.',
+    #    'Find {variable}, given that {equality}.',
+    #    'Determine {variable} so that {equality}.',
+    #    'Determine {variable}, given that {equality}.',
+    #    'Solve {equality}.'
+    #])
+    template = random.choice(en.algebra['template_1'])
     return example.Problem(
         question=example.question(
             context, template, equality=equality, variable=variable),
@@ -212,9 +215,11 @@ def polynomial_roots(value, sample_args, context=None):
       expression = polynomial_entity.handle.apply(variable)
     factored = sympy.factor(
         polynomials.coefficients_to_polynomial(coeffs, variable))
-    template = random.choice([
-        'Factor {expression}.',
-    ])
+    # Algebra template 2
+    #template = random.choice([
+    #    'Factor {expression}.',
+    #])
+    template = random.choice(en.algebra['template_2'])
     return example.Problem(
         question=example.question(context, template, expression=expression),
         answer=factored)
@@ -265,9 +270,11 @@ def _solve_linear_system(degree, value, sample_args, context=None):
   equations = ', '.join([str(equation) for equation in equations])
 
   if is_question:
-    template = random.choice([
-        'Solve {equations} for {variable}.',
-    ])
+    # Algebra template 3
+    #template = random.choice([
+    #    'Solve {equations} for {variable}.',
+    #])
+    template = random.choice(en.algebra['template_3'])
     return example.Problem(
         example.question(
             context, template, equations=equations,
@@ -277,7 +284,8 @@ def _solve_linear_system(degree, value, sample_args, context=None):
     return composition.Entity(
         context=context,
         value=answer,
-        description='Suppose {equations}.',
+        #description='Suppose {equations}.',  # Algebra misc 1
+        description=en.algebra['misc_1'],
         handle=variable,
         equations=equations)
 
@@ -343,11 +351,14 @@ def sequence_next_term(min_entropy, max_entropy):
   sequence_sample = [sequence.term(n + 1) for n in range(num_terms)]
   sequence_sample = display.NumberList(sequence_sample)
 
-  template = random.choice([
-      'What is next in {sequence}?',
-      'What comes next: {sequence}?',
-      'What is the next term in {sequence}?',
-  ])
+  # Algebra template 4
+  #template\
+  #    = random.choice([
+  #    'What is next in {sequence}?',
+  #    'What comes next: {sequence}?',
+  #    'What is the next term in {sequence}?',
+  #])
+  template = random.choice(en.algebra['template_4'])
   answer = sequence.term(num_terms + 1)
 
   return example.Problem(
@@ -367,9 +378,11 @@ def sequence_nth_term(min_entropy, max_entropy):
   sequence_sample = [sequence.term(n + 1) for n in range(num_terms)]
   sequence_sample = display.NumberList(sequence_sample)
 
-  template = random.choice([
-      'What is the {variable}\'th term of {sequence}?',
-  ])
+  # Algebra template 5
+  #template = random.choice([
+  #    'What is the {variable}\'th term of {sequence}?',
+  #])
+  template = random.choice(en.algebra['template_5'])
   answer = sequence.sympy
 
   return example.Problem(

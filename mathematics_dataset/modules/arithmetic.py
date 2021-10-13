@@ -138,6 +138,7 @@ def _add_question_or_entity(context, p, q, is_question):
   value = p.value + q.value
 
   if is_question:
+    # Template 1
     template = random.choice([
         '{p} + {q}',
         '{p}+{q}',
@@ -158,7 +159,7 @@ def _add_question_or_entity(context, p, q, is_question):
     return composition.Entity(
         context=context,
         value=value,
-        description='Let {self} = {p} + {q}.',
+        description='Let {self} = {p} + {q}.', # misc 1
         p=p, q=q)
 
 
@@ -167,6 +168,7 @@ def _sub_question_or_entity(context, p, q, is_question):
   value = p.value - q.value
 
   if is_question:
+    # Template 2
     templates = [
         '{p} - {q}',
         'Work out {p} - {q}.',
